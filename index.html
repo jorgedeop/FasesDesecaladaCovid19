@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es"> 
+	<head> 
+		<meta charset="UTF-8"/>
+		<title>Desescalada España Covid-19</title>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+		integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+		crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+			integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+			crossorigin="">
+		</script>
+		<script type="text/javascript" src="provincias.js"></script>
+		
+		<style> 
+			body {
+			padding: 0;
+			margin: 0;
+			}
+			html, body, #map {
+			height: 100%;
+			}
+			.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+			}
+			.info h1 {
+			font-size: 18px;
+			margin: 0.1 0 0px;
+			font-family: Helvetica;
+			color: red;
+			}
+			.info h2 {
+			margin: 0 0 5px;
+			font-family: Helvetica;
+			color: blue;
+			}
+			.info h3 {
+			font-size: 12px;
+			margin: 0 0 0px;
+			font-family: Helvetica;
+			color: black;
+			}
+			.info h4 {
+			font-size: 18px;
+			margin: 1 0 0px;
+			font-family: Helvetica;
+			color: orange;
+			}
+			Estilo1{
+				font-size: 18px;
+				font-family: Helvetica;
+				color: blue;
+			}
+			
+			Estilo2{
+				font-size: 12px;
+				font-family: Helvetica;
+				color: black;
+			}
+			.legend {
+				line-height: 18px;
+				color: #555;
+			} 
+			.legend I {
+				width: 18px;
+				height: 18px;
+				float: left;
+				margin-right: 8px;
+				opacity: 0.7;
+			}	 
+			
+		</style> 
+		<script src="js/leaflet-providers.js"></script>
+		<script src="Leaflet.MakiMarkers.js"></script>
+
+		<!-- Leaflet Plugins -->
+		<link rel="stylesheet" href="Control.MiniMap.css"/>
+		<script src="Control.MiniMap.js"></script>
+		<link rel="stylesheet" href="L.Control.MousePosition.css" />
+		<script src="L.Control.MousePosition.js"></script>
+		<link rel="stylesheet" href="Control.FullScreen.css" />
+		<script src="Control.FullScreen.js"></script>
+		<link rel="stylesheet" href="leaflet.groupedlayercontrol.css" />
+		<script src="leaflet.groupedlayercontrol.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
+		<script src="https://www.domoritz.de/leaflet-locatecontrol/src/L.Control.Locate.js" charset="utf-8"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/opencagedata/leaflet-opencage-search@d4cbd36122efc8d17152b4177ed0e12165305441/dist/css/L.Control.OpenCageData.Search.min.css" />
+		<script src="https://cdn.jsdelivr.net/gh/opencagedata/leaflet-opencage-search@d4cbd36122efc8d17152b4177ed0e12165305441/dist/js/L.Control.OpenCageSearch.min.js"></script>
+		
+	</head>  
+	<body>
+		<div id ="map"> </div> 
+		<script type="text/javascript">
+				
+		var osm = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+				zoom: 11,
+				dragging: false,
+				id: 'mapbox.streets',
+				accessToken: 'pk.eyJ1IjoiamF2aWVyZ3A5IiwiYSI6ImNqc20xdDl3NzAwZmQzeWxmMzVta3BsNHgifQ.-ZG7a1yX6mXsd7nU4piEuw'
+		});
+		var map = L.map('map', {
+			center: [39.4355000, -1.6725600],
+			zoom: 6,
+			layers: osm,
+			zoomControl:false,
+			fullscreenControl: true
+		});
+		
+		var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+		attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+		}).addTo(map);
+		
+		var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+		attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+		});
+		
+		var title = L.control({ position:'topright'});
+			title.onAdd = function (map) {
+			var div = L.DomUtil.create('div', 'info');
+				div.innerHTML +=
+				'<h2>Desescalada España Covid-19 (11/05/2020)</h2><h3>Fuente: Ministerio de Sanidad.</h3>';
+		return div;
+		};
+		title.addTo(map);
+		
+		var title1 = L.control({ position:'topright'});
+			title1.onAdd = function (map) {
+			var div = L.DomUtil.create('div', 'info');
+				div.innerHTML +=
+				'<h1>FASE 0:</h1><h3>- Paseos acompañados.</h3><h3>- Deporte individual.</h3><h3>- Entrenamientos individuales de deportistas profesionales</h3><h3>y federados y entrenamiento básico de ligas profesionales.</h3><h3>- Apertura de pequeños locales con cita previa para la atención </h3><h3>individual de clientes.</h3><h4>FASE 1:</h4><h3>- Reuniones sociales de hasta 10 personas.</h3><h3>- Apertura del pequeño comercio.</h3><h3>- Apertura de terrazas (ocupación hasta el 50%).</h3><h3>- Apertura de hoteles y de alojamientos turísticos.</h3><h3>- Los lugares de culto tendrán limitación del 30%.</h3><h3>- Sector agroalimentario y pesquero.</h3><h3>- Entrenamiento medio en ligas profesionales.</h3><h3>- Deporte no profesional: sin contacto físico ni uso de vestuarios.</h3><h3>- Mercados al aire libre, con distanciamiento entre puestos.</h3><h3>- Espectáculos culturales de menos de 30 personas en </h3><h3>lugares cerrados (con un tercio de aforo) y de menos de 200 </h3><h3>personas al aire libre.</h3><h3>- Visitas a museos limitadas a un tercio del aforo.</h3><h3>- Velatorios: para un número limitado de asistentes.</h3>';
+		return div;
+		};
+		title1.addTo(map);
+		
+		new L.Control.Zoom({ position:'topleft'}).addTo(map);
+		
+		new L.control.locate({ position:'topleft'}).addTo(map);
+		
+		
+		
+		function getColor1(d) {
+			return d > 1 ? '#FCF66A':
+			d < 1 ? '#d7191c':
+			'#FCF66A';
+		}
+		
+		function provinciasStyle(feature) {
+			return {
+			fillColor: getColor1(feature.properties.FASE),
+			weight: 1,
+			opacity: 1,
+			color: 'grey',
+			fillOpacity: 1
+		};
+		}
+		
+		
+		
+		function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			weight: 4,
+			color: '#666',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+			layer.bringToFront();
+		}
+
+		info.update(layer.feature.properties);
+		}
+
+		function resetHighlight(e) {
+		provincias.resetStyle(e.target);
+		info.update();
+		}
+
+		function zoomToFeature(e) {
+		map.fitBounds(e.target.getBounds());
+		}
+
+		function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature
+		})
+		};
+		
+		var mouse = new L.Control.MousePosition({ position:'bottomleft'}).addTo(map);
+		var escala = L.control.scale({ position:'bottomleft'}).addTo(map);
+		var info = L.control({ position:'bottomleft'});
+		
+		info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info');
+		this.update();
+		return this._div;
+		};
+
+		info.update = function (props) {
+		this._div.innerHTML = props ?
+			'<h3><Estilo1>'+ props.ETIQUETA + '</Estilo1></h3><h1><Estilo2>Positivos totales: ' + props.Positivos + '</Estilo2></h1><h1><Estilo2>Positivos últimos 14 días (CCAA): ' + props.catorce + '</Estilo2></h1><h1><Estilo2>IA últimos 14 días (CCAA): ' + props.IA + '</Estilo2></h1>'
+			: '<h2><Estilo2>Navegue por el mapa</Estilo2></h2>';
+		};
+
+		info.addTo(map);
+		
+		var provincias = L.geoJson(provincias, {style: provinciasStyle, 
+			onEachFeature: onEachFeature
+		}).addTo(map);
+		
+		var legend1 = L.control({position: 'topleft'});
+		legend1.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [0, 1],
+			labels = ['Fase 0', 'Fase 1'];
+		
+		div.innerHTML += '<b>FASES DESESCALADA      </b><br>'
+		
+		for (var i = 0; i < grades.length; i++) {
+			div.innerHTML += 
+			'<i style="background:' + getColor1(grades[i]) + '"></i> ' +
+			labels[i] + '<br>';
+		};
+		return div;
+		};legend1.addTo(map);
+		
+		
+		var baselayers = {
+			"Open StreetMap": osm,
+			"World StreetMap": Esri_WorldStreetMap,
+			"Ortoimagen": Esri_WorldImagery						
+		};
+		
+		L.control.layers(baselayers).addTo(map);
+		
+		
+		
+		</script>
+	</body> 
+</html>
